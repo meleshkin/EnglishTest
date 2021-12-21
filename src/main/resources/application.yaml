@@ -1,0 +1,20 @@
+spring:
+  config:
+    activate:
+      on-profile: develop
+
+  datasource:
+    url: jdbc:postgresql://192.168.247.130:5432/postgres
+    username: test
+    password: test
+
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
