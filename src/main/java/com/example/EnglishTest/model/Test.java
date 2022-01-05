@@ -1,6 +1,9 @@
 package com.example.EnglishTest.model;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Test {
@@ -10,6 +13,10 @@ public class Test {
     private long id;
     private String name;
     private String description;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "test_fk")
+    private List<Question> questions;
 
     public long getId() {
         return id;
@@ -33,5 +40,13 @@ public class Test {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<Question> questions) {
+        this.questions = questions;
     }
 }

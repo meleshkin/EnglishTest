@@ -8,6 +8,11 @@ spring:
     username: test
     password: test
 
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+
 ---
 spring:
   config:
@@ -18,3 +23,7 @@ spring:
     url: ${JDBC_DATABASE_URL}
     username: ${JDBC_DATABASE_USERNAME}
     password: ${JDBC_DATABASE_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: create
