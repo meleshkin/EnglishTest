@@ -1,9 +1,8 @@
 package com.example.EnglishTest.controller;
 
-import com.example.EnglishTest.model.Answer;
 import com.example.EnglishTest.model.Question;
 import com.example.EnglishTest.model.Test;
-import com.example.EnglishTest.service.TestRepository;
+import com.example.EnglishTest.service.QuestionService;
 import com.example.EnglishTest.service.TestService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,23 +11,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class MainController {
 
     private final TestService testService;
+    private final QuestionService questionService;
 
-    public MainController(TestService testService) {
+    public MainController(TestService testService, QuestionService questionService) {
         this.testService = testService;
+        this.questionService = questionService;
     }
 
     @GetMapping("/")
     @SuppressWarnings("unused")
     public String handleMain(Model model) {
-        List<Test> allTests = testService.getAllTests();
-        model.addAttribute("allTests", allTests);
+        fillModelWithAllTests(model);
         return "main.html";
     }
 
@@ -41,8 +40,9 @@ public class MainController {
 
     @PostMapping("/test/create")
     @SuppressWarnings("unused")
-    public String createTest(@ModelAttribute Test test) {
+    public String createTest(@ModelAttribute Test test, Model model) {
         testService.createTest(test);
+        fillModelWithAllTests(model);
         return "main.html";
     }
 
@@ -57,28 +57,49 @@ public class MainController {
 
     @PostMapping("/test/edit")
     @SuppressWarnings("unused")
-    public String editTest(@ModelAttribute Test test) {
-        System.out.println(test);
-        return "editTest.html";
-    }
-
-    @GetMapping("/question/edit/{id}")
-    public String editQuestion(@PathVariable long id, Model model) {
-        // todo: impl. it
+    public String editTest(@ModelAttribute Test test, Model model) {
+        testService.saveTest(test);
+        fillModelWithAllTests(model);
         return "main.html";
     }
 
-    @GetMapping("/test/edit2")
-    public String testEdit(Model model) {
-        Question q = new Question();
-        q.setAnswers(new ArrayList<>());
-        model.addAttribute("question", q);
-        return "editTestOld.html";
+    @GetMapping("/question/edit/{id}/testId/{testId}")
+    @SuppressWarnings("unused")
+    public String editQuestion(@PathVariable long id, @PathVariable long testId,  Model model) {
+        Question question = questionService.getById(id);
+        question.setTestId(testId);
+        model.addAttribute("question", question);
+        return "editQuestion.html";
     }
 
-    @PostMapping("/test/edit1")
-    public String testEdit1(@ModelAttribute Question question) {
-        System.out.println(question);
-        return "editTestOld.html";
+    @PostMapping("/question/edit")
+    @SuppressWarnings("unused")
+    public String editQuestion(@ModelAttribute Question question, Model model) {
+        long testId = question.getTestId();
+        questionService.update(question);
+        Test testWithNewQuestion = testService.getById(testId);
+        model.addAttribute("test", testWithNewQuestion);
+        return "editTest.html";
+    }
+
+    @GetMapping("/test/addQuestion/{testId}")
+    @SuppressWarnings("unused")
+    public String addQuestion(@PathVariable long testId, Model model) {
+        Test testWithNewQuestion = testService.addQuestion(testId);
+        model.addAttribute("test", testWithNewQuestion);
+        return "editTest.html";
+
+    }
+
+    @GetMapping("/test/delete/{id}")
+    public String deleteTest(@PathVariable long id, Model model) {
+        testService.deleteTest(id);
+        fillModelWithAllTests(model);
+        return "main.html";
+    }
+
+    private void fillModelWithAllTests(Model model) {
+        List<Test> allTests = testService.getAllTests();
+        model.addAttribute("allTests", allTests);
     }
 }

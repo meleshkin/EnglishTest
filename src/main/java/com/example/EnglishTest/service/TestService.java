@@ -19,7 +19,10 @@ public class TestService {
     }
 
     public Test saveTest(Test test) {
-        return testRepository.save(test);
+        Test oldTest = testRepository.getById(test.getId());
+        oldTest.setName(test.getName());
+        oldTest.setDescription(test.getDescription());
+        return testRepository.save(oldTest);
     }
 
     private List<String> answerKeys = Arrays.asList("A", "B", "C", "D");
@@ -30,7 +33,8 @@ public class TestService {
         List<Question> questions = new ArrayList<>(questionsQty);
         for (int i=0; i<questionsQty; i++) {
             Question q = new Question();
-            q.setText("Question #" + i+1);
+            int questionNumber = i+1;
+            q.setText("Question #" + questionNumber);
 
             List<Answer> answers = new ArrayList<>(answersQty);
             for (int j=0; j<answersQty; j++) {
@@ -55,5 +59,28 @@ public class TestService {
 
     public List<Test> getAllTests() {
         return testRepository.findAll();
+    }
+
+    public Test addQuestion(long testId) {
+        Test test = testRepository.getById(testId);
+        Question q = new Question();
+        q.setText("New question");
+        int answersQty = 4;
+        List<Answer> answers = new ArrayList<>(answersQty);
+        for (int j=0; j<answersQty; j++) {
+            Answer a = new Answer();
+            a.setAnswerKey(answerKeys.get(j));
+            a.setAnswerValue("Answer " + a.getAnswerKey());
+            a.setCorrect(j == 0);
+            answers.add(a);
+        }
+        q.setAnswers(answers);
+
+        test.getQuestions().add(q);
+        return testRepository.save(test);
+    }
+
+    public void deleteTest(Long testId) {
+        testRepository.deleteById(testId);
     }
 }

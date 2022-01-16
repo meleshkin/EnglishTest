@@ -18,6 +18,9 @@ public class Question {
     @JoinColumn(name = "question_fk")
     private List<Answer> answers;
 
+    @Transient
+    private long testId;
+
     public String getText() {
         return text;
     }
@@ -42,5 +45,11 @@ public class Question {
         this.answers = answers;
     }
 
+    public long getTestId() {
+        return testId;
+    }
 
+    public void setTestId(long testId) {
+        this.testId = testId;
+    }
 }
