@@ -14,31 +14,31 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 @Controller
-public class MainController {
+public class AdminTestController {
 
     private final TestService testService;
     private final QuestionService questionService;
 
-    public MainController(TestService testService, QuestionService questionService) {
+    public AdminTestController(TestService testService, QuestionService questionService) {
         this.testService = testService;
         this.questionService = questionService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/admin/")
     @SuppressWarnings("unused")
     public String handleMain(Model model) {
         fillModelWithAllTests(model);
         return "main.html";
     }
 
-    @GetMapping("/test/new")
+    @GetMapping("/admin/test/new")
     @SuppressWarnings("unused")
     public String newTest(Model model) {
         model.addAttribute("test", new Test());
         return "createTest.html";
     }
 
-    @PostMapping("/test/create")
+    @PostMapping("/admin/test/create")
     @SuppressWarnings("unused")
     public String createTest(@ModelAttribute Test test, Model model) {
         testService.createTest(test);
@@ -47,7 +47,7 @@ public class MainController {
     }
 
 
-    @GetMapping("/test/edit/{id}")
+    @GetMapping("/admin/test/edit/{id}")
     @SuppressWarnings("unused")
     public String editTest(@PathVariable long id, Model model) {
         Test test = testService.getById(id);
@@ -55,7 +55,7 @@ public class MainController {
         return "editTest.html";
     }
 
-    @PostMapping("/test/edit")
+    @PostMapping("/admin/test/edit")
     @SuppressWarnings("unused")
     public String editTest(@ModelAttribute Test test, Model model) {
         testService.saveTest(test);
@@ -63,7 +63,7 @@ public class MainController {
         return "main.html";
     }
 
-    @GetMapping("/question/edit/{id}/testId/{testId}")
+    @GetMapping("/admin/question/edit/{id}/testId/{testId}")
     @SuppressWarnings("unused")
     public String editQuestion(@PathVariable long id, @PathVariable long testId,  Model model) {
         Question question = questionService.getById(id);
@@ -72,7 +72,7 @@ public class MainController {
         return "editQuestion.html";
     }
 
-    @PostMapping("/question/edit")
+    @PostMapping("/admin/question/edit")
     @SuppressWarnings("unused")
     public String editQuestion(@ModelAttribute Question question, Model model) {
         long testId = question.getTestId();
@@ -82,7 +82,7 @@ public class MainController {
         return "editTest.html";
     }
 
-    @GetMapping("/test/addQuestion/{testId}")
+    @GetMapping("/admin/test/addQuestion/{testId}")
     @SuppressWarnings("unused")
     public String addQuestion(@PathVariable long testId, Model model) {
         Test testWithNewQuestion = testService.addQuestion(testId);
@@ -91,7 +91,7 @@ public class MainController {
 
     }
 
-    @GetMapping("/test/delete/{id}")
+    @GetMapping("/admin/test/delete/{id}")
     public String deleteTest(@PathVariable long id, Model model) {
         testService.deleteTest(id);
         fillModelWithAllTests(model);
